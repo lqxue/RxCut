@@ -6,12 +6,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import rx.cut.Observable;
-import rx.cut.Observer;
-import rx.cut.Subscriber;
-import rx.cut.android.schedulers.AndroidSchedulers;
-import rx.cut.functions.Func1;
-import rx.cut.schedulers.Schedulers;
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.cut.rxjava.Observable;
+import rx.cut.rxjava.Observer;
+import rx.cut.rxjava.Subscriber;
+import rx.cut.rxandroid.schedulers.AndroidSchedulers;
+import rx.cut.rxjava.Subscription;
+import rx.cut.rxjava.schedulers.Schedulers;
 
 public class MainActivity extends Activity {
 
@@ -23,10 +26,10 @@ public class MainActivity extends Activity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Observable.create(new Observable.OnSubscribe<String>() {
+                Subscription wo = Observable.create(new Observable.OnSubscribe<String>() {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
-                        subscriber.onNext( "99"+Thread.currentThread().getName());
+                        subscriber.onNext("99" + Thread.currentThread().getName());
                     }
                 }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -44,9 +47,10 @@ public class MainActivity extends Activity {
                             @Override
                             public void onNext(String s) {
                                 textView.setText(s);
-                                Log.e("wo", s+Thread.currentThread().getName());
+                                Log.e("wo", s + Thread.currentThread().getName());
                             }
                         });
+                wo.unsubscribe();
 
             }
         });
